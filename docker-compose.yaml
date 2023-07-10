@@ -1,0 +1,40 @@
+services:
+  sqlserver:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: sqlserver
+    user: root
+    ports:
+      - "1433:1433"
+    environment:
+      SA_USERNAME: sa
+      SA_PASSWORD: Dev1234!
+      ACCEPT_EULA: Y
+      MSSQL_AGENT_ENABLED: 'true'
+      MSSQL_PID: Express # Using express is free and smaller
+    volumes:
+      - ./volumes/data2:/var/opt/mssql/data
+      - ./volumes/backup:/var/opt/mssql/Backup
+    restart: unless-stopped
+  rabbitmq:
+    image: rabbitmq:3.11-management-alpine # Alpine Linux is much smaller than most distribution base images
+    container_name: rabbitmq
+    ports:
+      - '15672:15672' #http
+      - '5672:5672' #amqp
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: Dev1234!
+    restart: unless-stopped
+  redis:
+    image: redis:7.0.11-alpine
+    container_name: redis
+    ports:
+      - '6379:6379'
+    restart: unless-stopped
+  sonarqube:
+    image: sonarqube:latest
+    container_name: sonarqube
+    ports:
+      - '8085:9000'
+      - '9092:9092'
+    restart: unless-stopped
